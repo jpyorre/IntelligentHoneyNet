@@ -488,7 +488,7 @@ EOF
 #Change ENABLED=0 to ENABLED=1 in /etc/default/stunnel4:
 sed -i 's/ENABLED=0/ENABLED=1/g' /etc/default/stunnel4
 
-sed -i 's/REPLACEME/$SERVER/g' /etc/stunnel/stunnel.conf
+# This doesn't seem to be working as expected. The installer/user is now told to do this at the end: sed -i 's/REPLACEME/$SERVER/g' /etc/stunnel/stunnel.conf
 
 ####### END STUNNEL CONFIG #######
 
@@ -747,6 +747,27 @@ apt-get install iptables-persistent -y
 # Start up services:
 /etc/init.d/stunnel4 start
 supervisorctl update
+
+clear
+echo "You need to do one manual configuration:
+sudo vim (or whatever editor) /etc/stunnel/stunnel.conf
+
+Change the REPLACEME parts to the IP or domain name of the honeypot server.
+
+cert = /etc/stunnel/stunnel.pem
+client = yes
+[reddis]
+accept = 127.0.0.1:6379
+connect = REPLACEME:6378
+
+[logstash-filetransfer]
+accept = 6782
+connect = REPLACEME:6781
+
+Then type: sudo service stunnel4 restart
+"
+
+
 
 ENDOFCLIENTSCRIPT
 
