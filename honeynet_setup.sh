@@ -65,7 +65,11 @@ chmod 755 /usr/bin/testlogstash.sh
 # Stuff we need for various parts of this installation:
 apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
 echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | tee /etc/apt/sources.list.d/mongodb.list
-apt-get update && apt-get install build-essential libffi-dev apache2 redis-server stunnel4 supervisor openjdk-7-jdk curl libgeoip-dev mongodb-org git apache2-utils libapache2-mod-wsgi python-dev -y
+apt-get update && apt-get install build-essential libffi-dev apache2 redis-server stunnel4 supervisor openjdk-7-jdk curl libgeoip-dev mongodb-org git apache2-utils libapache2-mod-wsgi python-dev ntp -y
+
+# Update the date (seems to have been a problem during my testing - my vm's were not udpating their date and time)
+echo "This might hang for about 5 seconds:"
+service ntp stop && /usr/sbin/ntpdate pool.ntp.org && service ntp start
 
 cd /usr/local/src && wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py
 
@@ -409,7 +413,11 @@ read SERVER
 
 add-apt-repository -y ppa:honeynet/nightly
 apt-get update
-apt-get -y install python-dev openssl python-openssl python-pyasn1 python-twisted git python-pip authbind python-software-properties patch libglib2.0-dev libssl-dev libcurl4-openssl-dev libreadline-dev libsqlite3-dev libtool automake autoconf build-essential subversion git-core flex bison pkg-config libgc-dev libgc1c2 sqlite3 python-geoip sqlite libnl-3-dev libnl-genl-3-dev libnl-nf-3-dev libnl-route-3-dev supervisor stunnel4 openjdk-7-jdk curl authbind python-dev openssl git libsmi2ldbl libsmi2-common python-dev libxml2-dev python-lxml libxslt-dev libmysqlclient-dev dionaea
+apt-get -y install python-dev openssl python-openssl python-pyasn1 python-twisted git python-pip authbind python-software-properties patch libglib2.0-dev libssl-dev libcurl4-openssl-dev libreadline-dev libsqlite3-dev libtool automake autoconf build-essential subversion git-core flex bison pkg-config libgc-dev libgc1c2 sqlite3 python-geoip sqlite libnl-3-dev libnl-genl-3-dev libnl-nf-3-dev libnl-route-3-dev supervisor stunnel4 openjdk-7-jdk curl authbind python-dev openssl git libsmi2ldbl libsmi2-common python-dev libxml2-dev python-lxml libxslt-dev libmysqlclient-dev dionaea ntp
+
+# Update the date (seems to have been a problem during my testing - my vm's were not udpating their date and time)
+echo "This might hang for about 5 seconds:"
+service ntp stop && /usr/sbin/ntpdate pool.ntp.org && service ntp start
 
 pip install --upgrade distribute
 pip install virtualenv
