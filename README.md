@@ -3,8 +3,8 @@
 *Work in progress*
 
 *Last update, 9/17/2015*
-(http://imgur.com/Sfk9Az4)
-(http://imgur.com/13V78fz)
+![alt tag](http://imgur.com/Sfk9Az4)
+![alt tag](http://imgur.com/13V78fz)
 
 
 Purpose
