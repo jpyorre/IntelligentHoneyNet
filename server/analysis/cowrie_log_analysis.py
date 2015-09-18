@@ -59,23 +59,24 @@ def IP_query_OpenDNS_investigate(ip):
 # Get whois information on a list of domains
 def domain_query_OpenDNS_investigate(domain):
 
-    request = Request('https://investigate.api.opendns.com/whois/' + domain + '.json', headers=headers)
-    response_body = urlopen(request).read()
-    values = json.loads(response_body)
-    
-    regstreet = (values['registrantStreet'])
-    regcity = (values['registrantCity'])
-    regstate = (values['registrantState'])
-    regcountry = (values['registrantCountry'])
-    reg_address = str(regstreet) + ', ' + str(regcity) + ', ' + str(regstate) + ', ' + str(regcountry)
-    #regcontactname = (values['registrant_contact_name'])
-    regemail = (values['emails'])
-   # registrantorg = (values['registrant_contact_organization'])
-    created = (values['created'])
-    expiration = (values['expires'])
-    updated = (values['updated'])
-    registrar = (values['registrarName'])
-    nameServers = (values['nameServers'][0])
+    try:
+        request = Request('https://investigate.api.opendns.com/whois/' + domain + '.json', headers=headers)
+        response_body = urlopen(request).read()
+        values = json.loads(response_body)
+
+        regstreet = (values['registrantStreet'])
+        regcity = (values['registrantCity'])
+        regstate = (values['registrantState'])
+        regcountry = (values['registrantCountry'])
+        reg_address = str(regstreet) + ', ' + str(regcity) + ', ' + str(regstate) + ', ' + str(regcountry)
+        #regcontactname = (values['registrant_contact_name'])
+        regemail = (values['emails'])
+       # registrantorg = (values['registrant_contact_organization'])
+        created = (values['created'])
+        expiration = (values['expires'])
+        updated = (values['updated'])
+        registrar = (values['registrarName'])
+        nameServers = (values['nameServers'][0])
 
     # This section looks up the nameservers for the domain, but it was problematic when adding to mongodb. Leaving it in here in case I can figure it out later.
    
@@ -88,9 +89,11 @@ def domain_query_OpenDNS_investigate(domain):
 
     #domain_info = domain + '|' + registrar + '|' + created + '|' + expiration + '|' + updated + '\nNameservers: ' + nsinfo
 
-    domain_info = domain + '|' + registrar + '|' + created + '|' + expiration + '|' + updated
-    return(domain_info)
+        domain_info = domain + '|' + registrar + '|' + created + '|' + expiration + '|' + updated
+        return(domain_info)
 
+    except:
+        return('No Domain')
 def cowrie_log():
     file_timestamp = datetime.datetime.now().strftime("%s") #Used when renaming the log file after processing
     cowrie_log_file = '/opt/files/incoming/cowrie.log'
@@ -184,7 +187,7 @@ def cowrie_log():
             with open(Domains) as domainlist:
                 uniquedomainset = set(domainlist)
                 for domain in uniquedomainset:
-                    domain = domain.strip()
+                    domain = domain.strip().strip('\\')
                     investigated_domain = domain_query_OpenDNS_investigate(domain)
                     write_append(domain_investigated,investigated_domain)
                 
@@ -234,19 +237,23 @@ def cowrie_log():
         domaincallout = {}
         if os.path.isfile(domain_investigated):
             for eachline in open(domain_investigated):
-                domain,registrar,created,expiration,updated = eachline.strip().split('|')
-                domaincallout = {'domain':domain,'registrar':registrar,'created':created,'expiration':expiration,'updated':updated}
-                db.insert(domaincallout)
+		try:
+                	domain,registrar,created,expiration,updated = eachline.strip().split('|')
+                	domaincallout = {'domain':domain,'registrar':registrar,'created':created,'expiration':expiration,'updated':updated}
+                	db.insert(domaincallout)
+		except:
+			domaincallout = ''
     
     def put_SSH_GET_REQUESTS_into_mongodb():
         connection = MongoClient(mongo_db_host)
         db = connection.ssh.getrequests
 
         getrequest = {}
-        for eachline in open(SSH_get_requests):
-            getrequest_paragraph = eachline.strip()
-            getrequest = {'request':request}
-            db.insert(getrequest)
+	if os.path.isfile(SSH_get_requests):
+        	for eachline in open(SSH_get_requests):
+            		getrequest_paragraph = eachline.strip()
+            		getrequest = {'request':request}
+            		db.insert(getrequest)
     
 
     def remove_files():
@@ -265,7 +272,8 @@ def cowrie_log():
         if os.path.isfile(ip_investigated):
             os.system('rm ' + ip_investigated)
         if os.path.isfile(SSH_get_requests):
-            os.system('rm ' + SSH_get_requests)
+            os.system('cat ' + SSH_get_requests + ' >> /var/www/intel/intel/static/SSH_get_requests.txt')
+	    os.system('rm ' + SSH_get_requests)
         if os.path.isfile(host_callouts):
             os.system('rm ' + host_callouts)
             
@@ -280,7 +288,7 @@ def cowrie_log():
     write_everything()
     put_ipcallouts_into_mongodb()
     put_domaincallouts_into_mongodb()
-    put_SSH_GET_REQUESTS_into_mongodb()
+    #put_SSH_GET_REQUESTS_into_mongodb()   # Not active yet because I have to figure out how to organize this part.
     remove_files()
 
 def cowrie_json():
