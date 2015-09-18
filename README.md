@@ -8,6 +8,7 @@
 * Intel page: (http://imgur.com/13V78fz)
 
 
+
 Purpose
 --------------------
 This repository includes a shell script that will install both a honeypot server and any number of honeypots that will communicate with the server.
@@ -49,3 +50,17 @@ Requirements:
 *The server should work on any version of Linux, but it's been tested on Ubuntu Server 12.04
 *The client should be installed on Ubuntu Server 12.04 (Dionaea only seems to work on this version)
 Once installed, you need to add a virustotal API key to /opt/analysis/virustotal_api_key.txt and an investigate API key to /opt/analysis/investigate_api_key.txt
+
+How to run
+--------------------
+clone this on a (preferably) ubuntu 12.04 server, then cd to the IntelligentHoneyNet directory. Run 'sudo sh honeynet_setup.sh'. Answer a question or two in the beginning and do something for about 5 minutes. When it's done, follow the brief instructions that will be displayed on your screen for details on installing the honeypot clients.
+
+There are a few hiccups as of 9/18/15:
+* I'm still testing that the cron jobs are running the analysis scripts correctly
+* I need to write Conpot and Dionaea filters for logstash so Kibana can classify them correctly
+* I need to create a python script to get the Dionaea logs out of its sqlite db and into text
+* In the client install script that you run on honepot clients to configure them, I set it up so the public IP address (which you enter at the beginning of the process) is entered into the stunnel.conf file for secure communication of logstash -> Redis data and various log files between the honepot clients and the server. However, in testing, I've noticed that it hasn't been fixing that. I ended up adding a sed command to replace some text, but won't be testing that at the time of this writing (it'll be tested in about 10 hours). Hopefully the sed commands work. If not, here's what you need to do to fix it. 
+** sudo vim (or whatever editor you like) /etc/stunnel/stunnel.conf. 
+** Replace the REPLACEME part with the IP address or domain of the server.
+** Save and restart stunnel: sudo service stunnel4 restart
+
