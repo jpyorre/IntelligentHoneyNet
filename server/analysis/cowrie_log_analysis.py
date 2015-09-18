@@ -96,16 +96,16 @@ def cowrie_log():
     cowrie_log_file = '/opt/files/incoming/cowrie.log'
     ###################################################################    
     # Used in the write_everything() function. Modify to write to a CSV file:
-    lastlineread = '/opt/files/analysis/cowrie_log_lastline.txt'
-    SSH_get_requests = '/opt/files/analysis/SSH_get_requests.txt'
-    host_callouts = '/opt/files/analysis/SSH_Host_callouts.txt'
-    SSH_get_requests_temp = '/opt/files/analysis/SSH_get_requests_temp.txt'
-    host_info = '/opt/files/analysis/host_info_temp.txt'
-    IP_addresses = '/opt/files/analysis/ip_addresses.txt'
-    Domains = '/opt/files/analysis/domains.txt'
-    ip_investigated = '/opt/files/analysis/ip_investigated.txt'
-    domain_investigated = '/opt/files/analysis/domain_investigated.txt'
-    temp_log = '/opt/files/analysis/cowrie_log_processing.json'    
+    lastlineread = '/opt/analysis/cowrie_log_lastline.txt'
+    SSH_get_requests = '/opt/analysis/SSH_get_requests.txt'
+    host_callouts = '/opt/analysis/SSH_Host_callouts.txt'
+    SSH_get_requests_temp = '/opt/analysis/SSH_get_requests_temp.txt'
+    host_info = '/opt/analysis/host_info_temp.txt'
+    IP_addresses = '/opt/analysis/ip_addresses.txt'
+    Domains = '/opt/analysis/domains.txt'
+    ip_investigated = '/opt/analysis/ip_investigated.txt'
+    domain_investigated = '/opt/analysis/domain_investigated.txt'
+    temp_log = '/opt/analysis/cowrie_log_processing.json'    
     ###################################################################    
     def write_lastline_after_processing():
         f = open(cowrie_log_file,'r')
