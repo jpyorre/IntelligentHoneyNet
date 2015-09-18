@@ -3,8 +3,9 @@
 *Work in progress*
 
 *Last update, 9/17/2015*
-![Dashboard](http://imgur.com/Sfk9Az4)
-![Intel page](http://imgur.com/13V78fz)
+
+* ![Dashboard](http://imgur.com/Sfk9Az4)
+* ![Intel page](http://imgur.com/13V78fz)
 
 
 Purpose
