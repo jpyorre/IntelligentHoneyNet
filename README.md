@@ -23,10 +23,10 @@ The honeynet server scripts use OpenDNS Investigate and Virustotal at the moment
 
 Current Honeypots
 --------------------
-Cowrie: SSH Honeypot (it's a fork of Kippo)
-GasPot: Attackers think they're connecting to gas station sensors
-ConPot: SCADA honeypot
-Dionaea: Collects malware
+* Cowrie: SSH Honeypot (it's a fork of Kippo)
+* GasPot: Attackers think they're connecting to gas station sensors
+* ConPot: SCADA honeypot
+* Dionaea: Collects malware
 
 Upcoming
 --------------------
