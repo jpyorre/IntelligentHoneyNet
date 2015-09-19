@@ -513,7 +513,7 @@ EOF
 #Change ENABLED=0 to ENABLED=1 in /etc/default/stunnel4:
 sed -i 's/ENABLED=0/ENABLED=1/g' /etc/default/stunnel4
 
-# This doesn't seem to be working as expected. The installer/user is now told to do this at the end: sed -i 's/REPLACEME/$SERVER/g' /etc/stunnel/stunnel.conf
+sed -i "s/REPLACEME/$SERVER/g" /etc/stunnel/stunnel.conf
 
 ####### END STUNNEL CONFIG #######
 
