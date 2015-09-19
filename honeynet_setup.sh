@@ -513,7 +513,7 @@ EOF
 #Change ENABLED=0 to ENABLED=1 in /etc/default/stunnel4:
 sed -i 's/ENABLED=0/ENABLED=1/g' /etc/default/stunnel4
 
-sed -i "s/REPLACEME/$SERVER/g" /etc/stunnel/stunnel.conf
+sed -e "s/REPLACEME/$SERVER/g" /etc/stunnel/stunnel.conf
 
 ####### END STUNNEL CONFIG #######
 
@@ -801,18 +801,31 @@ rm -rf client && rm Honeynet_client_configuration.sh
 
 clear
 
-echo "The server installation is complete. Copy the HoneyNet_Client_Installer.tar.gz from this directory (/opt/HoneyNet_Client_Installer.tar.gz) to any and all clients you want to set up as honeypots. 
-
-Important: 
-Add your API keys to:
-OpenDNS Investigate: /opt/analysis/investigate_api_key.txt
-Virus Total: /opt/analysis/virustotal_api_key.txt
+echo "The server installation is complete. Copy the HoneyNet_Client_Installer.tar.gz from this directory (/opt/HoneyNet_Client_Installer.tar.gz) to any and all clients you want to set up as honeypots, untar the file and run (on the honeypots, not this server):
+sudo sh Honeynet_client_configuration.sh
+There will be a few prompts. Enter the information requested and select yes when asked.
 
 Some basic information:
 
 1: Intel can be found at https://yourserverip/ (attackers have to attack your honeypots first and then data will being to populate in there)
 
 2: A kibana interface is set up at http://yourserverip/. You can make a dashboard there to show all the stuff.
+
+############################
+PORTS:
+############################
+The server needs to have the following tcp ports open to the public:
+6378: Stunnel sends redis traffic to this port
+6782: Stunnel sends files through logstash using this port
+80: Kibana is running at port 80
+443: The intel portion of the system is running at this port
+
+############################
+API KEYS:
+############################
+Add your API keys to:
+OpenDNS Investigate: /opt/analysis/investigate_api_key.txt
+Virus Total: /opt/analysis/virustotal_api_key.txt
 
 Questions: Visit the github page or email jpyorre @ gmail . com
 "
