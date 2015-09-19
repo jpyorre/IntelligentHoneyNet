@@ -425,9 +425,12 @@ def cowrie_json():
         sshsuccess = {}
         if os.path.isfile(Successful_Connections_file):
             for eachline in open(Successful_Connections_file):
-                time,source,user,password,asn,org,created = eachline.strip().split('|')
-                sshsuccess = {'time':time,'source':source,'user':user,'password':password,'asn':asn,'org':org,'created':created}
-                db.insert(sshsuccess)
+		try:
+                    time,source,user,password,asn,org,created = eachline.strip().split('|')
+                    sshsuccess = {'time':time,'source':source,'user':user,'password':password,'asn':asn,'org':org,'created':created}
+                    db.insert(sshsuccess)
+		except:
+		    sshsuccess = ''
 
     def put_ssh_unsuccessful_connections_into_mongodb():
         connection = MongoClient(mongo_db_host)
@@ -436,9 +439,12 @@ def cowrie_json():
         sshunsuccessful = {}
         if os.path.isfile(Unsuccessful_Connections_file):
             for eachline in open(Unsuccessful_Connections_file):
-                time,source,user,password,asn,org,created = eachline.strip().split('|')
-                sshunsuccessful = {'time':time,'source':source,'user':user,'password':password,'asn':asn,'org':org,'created':created}
-                db.insert(sshunsuccessful)
+		try:
+                    time,source,user,password,asn,org,created = eachline.strip().split('|')
+                    sshunsuccessful = {'time':time,'source':source,'user':user,'password':password,'asn':asn,'org':org,'created':created}
+                    db.insert(sshunsuccessful)
+		except:
+		    sshunsuccessful = ''
 
     def remove_files():
         if os.path.isfile(temp_log):
