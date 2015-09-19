@@ -53,7 +53,7 @@ Once installed, you need to add a virustotal API key to /opt/analysis/virustotal
 
 How to run
 --------------------
-clone this on a (preferably) ubuntu 12.04 server, then cd to the IntelligentHoneyNet directory. Run 'sudo sh honeynet_setup.sh'. Answer a question or two in the beginning and do something for about 5 minutes. When it's done, follow the brief instructions that will be displayed on your screen for details on installing the honeypot clients.
+Clone this on a (preferably) ubuntu 12.04 server, then cd to the IntelligentHoneyNet directory. Run 'sudo sh honeynet_setup.sh'. Answer a question or two in the beginning and do something for about 5 minutes. When it's done, follow the brief instructions that will be displayed on your screen for details on installing the honeypot clients.
 
 There are a few hiccups as of 9/18/15:
 * I'm still testing that the cron jobs are running the analysis scripts correctly
