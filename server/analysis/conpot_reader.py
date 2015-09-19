@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import json, os
 from itertools import islice
 import re
@@ -15,7 +17,7 @@ unique_ipaddresses = '/opt/analysis/unique_ipaddresses.txt'
 ipaddresses = '/opt/analysis/ipaddresses.txt'
 
 # Load Investigate API Key from investigate_token.txt:
-with open('/opt/analysis/investigate_api_key') as API_KEY:
+with open('/opt/analysis/investigate_api_key.txt') as API_KEY:
     token = API_KEY.read()
 
 headers = {
