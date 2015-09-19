@@ -13,6 +13,7 @@ MONGODB_PORT = 27017
 SSH_DBS_NAME = 'ssh'
 VT_DBS_NAME = 'virustotal'
 CONPOT_DBS_NAME = 'conpot'
+GASPOT_DBS_NAME = 'gaspot'
 
 @app.route("/")
 def index():
@@ -98,6 +99,18 @@ def conpotconnections():
 
 	connection.close()
 	return render_template('conpotconnections.html', data = conpotconnections)
+
+@app.route("/gaspot/connections")
+def gaspotconnections():
+        connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
+        COLLECTION_NAME = 'connections'
+        collection = connection[GASPOT_DBS_NAME][COLLECTION_NAME]
+        FIELDS = {'time': True, 'command': True, 'ip': True, 'asn': True, 'org': True, 'created': True,'_id': False }
+        conpotconnections = collection.find(projection=FIELDS)
+
+        connection.close()
+        return render_template('gaspotconnections.html', data = conpotconnections)
+
 
 if __name__ == "__main__":
 	app.run()
