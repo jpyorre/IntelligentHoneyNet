@@ -129,6 +129,21 @@ input {
 
 filter {
 
+# Conpot honeypot
+#
+  if [type] == "conpot" {
+    grok {
+       match => [ "message", "%{YEAR:year}-%{MONTHNUM:month}-%{MONTHDAY:day} %{TIME:time} : %{IP:srcip} \t%{DATA:srcport} \t %{IP:dstip} \t %{DATA:request_protocol} \t %{DATA:response_code} \t %{DATA:sensor_id} \t '%{DATA:request_raw}' " ]
+    }
+    
+    mutate {
+       add_field => [ "source-ip", "%{srcip}" ]
+    }
+    date {
+      match => [ "timestamp" , "yyyy-MM-dd HH:mm:ss" ]
+    }
+  }
+
 # GasPot honeypot
 if [type] == "GasPot" {
   grok {
@@ -377,13 +392,20 @@ cat > /opt/cronscripts/cowrie_log_analysis.sh<<EOF
 python /opt/analysis/cowrie_log_analysis.py
 EOF
 
+cat > /opt/cronscripts/gaspot_log_analysis.sh<<EOF
+#!/bin/sh
+python /opt/analysis/gaspot_reader.py
+EOF
+
 chmod 755 /opt/cronscripts/conpotanalyzer.sh
 chmod 755 /opt/cronscripts/malwareanalyzer.sh
 chmod 755 /opt/cronscripts/cowrie_log_analysis.sh
+chmod 755 /opt/cronscripts/gaspot_log_analysis.sh
 
 (crontab -u root -l; echo "*/4 * * * * /opt/cronscripts/conpotanalyzer.sh" ) | crontab -u root -
-(crontab -u root -l; echo "*/7 * * * * /opt/cronscripts/malwareanalyzer.sh" ) | crontab -u root -
-(crontab -u root -l; echo "*/10 * * * * /opt/cronscripts/cowrie_log_analysis.sh" ) | crontab -u root -
+(crontab -u root -l; echo "*/11 * * * * /opt/cronscripts/malwareanalyzer.sh" ) | crontab -u root -
+(crontab -u root -l; echo "*/8 * * * * /opt/cronscripts/cowrie_log_analysis.sh" ) | crontab -u root -
+(crontab -u root -l; echo "*/14 * * * * /opt/cronscripts/gaspot_log_analysis.sh" ) | crontab -u root -
 
 ####### END CRON CONFIG #######
 
