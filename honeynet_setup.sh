@@ -431,6 +431,9 @@ mkdir -p /opt/transfer /opt/conpot /opt/cronscripts /opt/analysis /opt/sshreplay
 # Copy analysis scripts:
 cp $HPN/client/analysis/* /opt/analysis/ && chmod 755 /opt/analysis/*
 
+# make some needed files so they can be chowned correctly:
+touch /opt/malware_from_honeypots && chown logstash:logstash /opt/malware_from_honeypots
+
 # Make some utilities for troubleshooting logstash when you need to add new things:
 
 cat > /usr/bin/editlogstashconf.sh<<EOF
@@ -778,7 +781,12 @@ clear
 
 echo "The server installation is complete. Copy the HoneyNet_Client_Installer.tar.gz from this directory (/opt/HoneyNet_Client_Installer.tar.gz) to any and all clients you want to set up as honeypots. 
 
-Some information:
+Important: 
+Add your API keys to:
+OpenDNS Investigate: /opt/analysis/investigate_api_key.txt
+Virus Total: /opt/analysis/virustotal_api_key.txt
+
+Some basic information:
 
 1: Intel can be found at https://yourserverip/ (attackers have to attack your honeypots first and then data will being to populate in there)
 
