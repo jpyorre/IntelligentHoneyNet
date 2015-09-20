@@ -19,7 +19,7 @@ for filename in replayfilenames:
 
 	if filename != '.gitignore':
 		if '.log' in filename:
-			playlogs_cmd = 'python /opt/cowrie/utils/playlog.py -m 0 /opt/cowrie/log/tty/' + filename.strip() + ' > /opt/sshreplays/' + filename.strip('log') + '.txt'
+			playlogs_cmd = 'python /opt/cowrie/utils/playlog.py -m 0 /opt/cowrie/log/tty/' + filename.strip() + ' > /opt/sshreplays/' + filename.strip('.log') + '.txt'
 			os.system(playlogs_cmd)
 			#os.system('rm /opt/cowrie/log/tty/' + filename)
   
