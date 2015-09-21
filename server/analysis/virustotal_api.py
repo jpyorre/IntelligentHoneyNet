@@ -3,36 +3,37 @@ from pprint import pprint as pp
 import os
 from pymongo import MongoClient
 import json
+import urllib,urllib2
 
 fileinfo = []
 
 host = 'www.virustotal.com'
 VT_API_base_uri = 'https://www.virustotal.com/vtapi/v2/'
-malware_from_honeypots = 'malware_from_honeypots.txt'
+#malware_from_honeypots = '/opt/files/incoming/malware_from_honeypots.txt'
+malware_from_honeypots = '/tmp/malware.txt'
 mongodb_host = 'localhost'
 vt_results = 'vt_results.txt'
-no_vtresults = 'no_vtresults.txt'
 
 with open('/opt/analysis/virustotal_api_key.txt') as API_KEY:
-    API_key = API_KEY.read()
+    API_key = API_KEY.read().strip('\n')
 
 def put_VTResults_into_mongodb():
 	connection = MongoClient(mongodb_host)
 	
-	novtresults_db = connection.virustotal.noresults
+	vtresults_db = connection.virustotal.results
 
 	vtresults = {}
 	for eachline in open(vt_results):
-		md5,vendor,result,updated,version = eachline.strip().split('|')
-		result = {'vendor':vendor,'result':result,'updated':updated,'version':version}
-		vtresults_db = connection.virustotal.results.md5
+		scandate,scanratio,variant,link = eachline.strip().split('|')
+		result = {'scandate':scandate,'scanratio':scanratio,'variant':variant,'link':link}
+		vtresults_db = connection.virustotal.results
 		vtresults_db.insert(result)
 
-	novtresults = {}
-	for eachline in open(no_vtresults):
-		md5,filename,text = eachline.strip().split('|')
-		noresult = {'md5':md5,'filename':filename,'text':text}
-		novtresults_db.insert(noresult)
+	#novtresults = {}
+	#for eachline in open(no_vtresults):
+	#	sha5,filename,text = eachline.strip().split('|')
+	#	noresult = {'sha256':sha256,'filename':filename,'text':text}
+	#	novtresults_db.insert(noresult)
 
 def write_vt_results(line):
 	writefile = open(vt_results,'a')
@@ -45,38 +46,44 @@ def write_no_vt_results(line):
 	writefile.close()
 
 
-def get_VT_report():
-	params = {'resource': md5, 'apikey': API_key}
-	response = requests.get(VT_API_base_uri + 'file/report', params=params)
-	json_response = response.json()
-	not_in_vt = 'The requested resource is not among the finished, queued or pending scans'
-	if not_in_vt in json_response['verbose_msg']:
-		line = str(md5) + '|' + str(filename) + '|' + 'Not found in VirusTotal'
-		write_no_vt_results(line)
-	else:
-		link = json_response['permalink']
-		hits = json_response['positives']
-		scan_date = json_response['scan_date']
-
-		av_info = json_response['scans']
-
+def get_VT_report(sha256):
+	url = "https://www.virustotal.com/vtapi/v2/file/report"
+	parameters = {"resource": sha256,"apikey": API_key}
+	data = urllib.urlencode(parameters)
+	req = urllib2.Request(url, data)
+	response = urllib2.urlopen(req)
+	_json = response.read()
+	info = json.loads(_json)
+	try:
+		link = info['permalink']
+       		positives = info['positives']
+		total = info['total']
+       		scandate = info['scan_date']
+		av_info = info['scans']
+		
 		# Get and format information from AV vendors:
+		avresults = []
 		for item in av_info:
 			detected = av_info[item]['detected']
 			result = av_info[item]['result']
-			update = av_info[item]['update']
+			scandate = av_info[item]['update']
 			version = av_info[item]['version']
-			line = str(md5) + '|' + str(item) + '|' + str(result) + '|' + str(update) + '|' + str(version)
-			write_vt_results(line)
+	
+			if detected == True:
+				avresults.append(result)
 
+		avresults = str(avresults).replace('[u\'','').replace('\', u\'',',').replace('\']','')
+		line = str(scandate) + '|' + str(positives) + '\\' + str(total) + '|' + str(avresults) + '|' + str(link)
+		write_vt_results(line)
+	except:
+		line = ''
 def remove_files():
 	os.system('rm ' + vt_results)
-	os.system('rm ' + no_vtresults)
-
+	os.system('echo '' > /opt/files/incoming/malware_from_honeypots.txt')
 for line in open(malware_from_honeypots, "r"):
 		data = json.loads(line)
-		filename,md5,source = data['message'].split(',')
-		print filename + '|' + md5 + '|' + source
-		get_VT_report()
+		filename,sha256,source = data['message'].split(',')
+		sha256 = sha256.strip('\n')
+		get_VT_report(sha256)
 put_VTResults_into_mongodb()
 remove_files()
