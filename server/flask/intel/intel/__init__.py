@@ -71,7 +71,7 @@ def vtresults():
 	connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
 	COLLECTION_NAME = 'results'
 	collection = connection[VT_DBS_NAME][COLLECTION_NAME]
-	FIELDS = {'md5': True, 'vendor': True, 'result': True, 'updated': True, 'version': True, '_id': False }
+	FIELDS = {'scandate': True, 'scanratio': True, 'variant': True, 'link': True, '_id': False }
 	vtresults = collection.find(projection=FIELDS)
 	connection.close()
 	
