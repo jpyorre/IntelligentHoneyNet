@@ -12,11 +12,10 @@
       <table width="100%" border=1>
         <thead>
           <tr>
-            <td>MD5</td>
-            <td>Vendor</td>
-            <td>Result</td>
-            <td>Updated</td>
-            <td>Version</td>
+            <td>Scanned</td>
+            <td>Ratio</td>
+            <td>Malware</td>
+            <td>Link on VT</td>
           </tr>
         </thead>
         <tbody>
@@ -24,11 +23,10 @@
 
           {% for items in data %}
             <tr>
-              <td>{{ items.md5  }}</td>
-              <td>{{ items.vendor  }}</td>
-              <td>{{ items.result  }}</td>
-              <td>{{ items.updated  }}</td>
-              <td>{{ items.version  }}</td>
+              <td>{{ items.scandate  }}</td>
+              <td>{{ items.scanratio  }}</td>
+              <td>{{ items.variant  }}</td>
+              <td><a href="{{ items.link  }}">More info</a></td>
 
           {% endfor %}
 
