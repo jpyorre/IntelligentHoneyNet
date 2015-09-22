@@ -80,8 +80,11 @@ def get_VT_report(sha256):
 def remove_files():
 	os.system('rm ' + vt_results)
 	os.system('echo '' > /opt/files/incoming/malware_from_honeypots.txt')
-for line in open(malware_from_honeypots, "r"):
-		data = json.loads(line)
+
+# open the file like this and skip the first line because it has a newline
+lines = open(malware_from_honeypots,'r').readlines()
+for eachline in lines[1:]:
+		data = json.loads(eachline)
 		filename,sha256,source = data['message'].split(',')
 		sha256 = sha256.strip('\n')
 		get_VT_report(sha256)
