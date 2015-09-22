@@ -12,7 +12,7 @@ host = 'www.virustotal.com'
 VT_API_base_uri = 'https://www.virustotal.com/vtapi/v2/'
 malware_from_honeypots = '/opt/files/incoming/malware_from_honeypots.txt'
 mongodb_host = 'localhost'
-vt_results = 'vt_results.txt'
+vt_results = '/opt/analysis/vt_results.txt'
 
 with open('/opt/analysis/virustotal_api_key.txt') as API_KEY:
     API_key = API_KEY.read().strip('\n')
