@@ -453,9 +453,6 @@ mkdir -p /opt/transfer /opt/conpot /opt/cronscripts /opt/analysis /opt/sshreplay
 # Copy analysis scripts:
 cp $HPN/client/analysis/* /opt/analysis/ && chmod 755 /opt/analysis/*
 
-# make some needed files so they can be chowned correctly:
-touch /opt/malware_from_honeypots && chown logstash:logstash /opt/malware_from_honeypots
-
 # Make some utilities for troubleshooting logstash when you need to add new things:
 
 cat > /usr/bin/editlogstashconf.sh<<EOF
@@ -638,7 +635,7 @@ cd /opt && git clone https://github.com/micheloosterhof/cowrie.git
 cd /opt/cowrie && mv cowrie.cfg.dist cowrie.cfg && sed -i 's/hostname = svr03/hostname = payroll/g' cfgowrie.cfg && sed -i 's/ssh_version_string = SSH-2.0-OpenSSH_5.1p1 Debian-5/ssh_version_string = OpenSSH_5.9p1 Debian-5ubuntu1.4, OpenSSL 1.0.1 14 Mar 2012/g' cowrie.cfg
 
 touch /opt/cowrie/log/cowrie.json
-touch /opt/malware_from_honeypots.txt
+touch /opt/malware_from_honeypots.txt && chmod 777 /opt/malware_from_honeypots.txt
 chown nobody:nogroup /opt/cowrie/log/cowrie.json
 chown nobody:nogroup /opt/cowrie/log/cowrie.log
 
