@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import hashlib, json, requests
 from pprint import pprint as pp
 import os
@@ -9,8 +10,7 @@ fileinfo = []
 
 host = 'www.virustotal.com'
 VT_API_base_uri = 'https://www.virustotal.com/vtapi/v2/'
-#malware_from_honeypots = '/opt/files/incoming/malware_from_honeypots.txt'
-malware_from_honeypots = '/tmp/malware.txt'
+malware_from_honeypots = '/opt/files/incoming/malware_from_honeypots.txt'
 mongodb_host = 'localhost'
 vt_results = 'vt_results.txt'
 
