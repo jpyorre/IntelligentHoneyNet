@@ -45,6 +45,10 @@ def write_no_vt_results(line):
 	writefile.write(line +'\n')
 	writefile.close()
 
+def writeappend(filename,line):
+        writefile = open(filename,'a')
+        writefile.write(str(line) +'\n')
+        writefile.close()
 
 def get_VT_report(sha256):
 	url = "https://www.virustotal.com/vtapi/v2/file/report"
@@ -81,12 +85,17 @@ def remove_files():
 	os.system('rm ' + vt_results)
 	os.system('echo '' > /opt/files/incoming/malware_from_honeypots.txt')
 
+# Fix stupid permission issues:
+os.system('chmod 777 /opt/files/incoming/malware_from_honeypots.txt')
 # open the file like this and skip the first line because it has a newline
 lines = open(malware_from_honeypots,'r').readlines()
 for eachline in lines[1:]:
 		data = json.loads(eachline)
-		filename,sha256,source = data['message'].split(',')
-		sha256 = sha256.strip('\n')
-		get_VT_report(sha256)
+		try:
+			filename,sha256,source = data['message'].split(',')
+			sha256 = sha256.strip('\n')
+			get_VT_report(sha256)
+		except:
+			writeappend('no_vt_results.txt',data)
 put_VTResults_into_mongodb()
 remove_files()
