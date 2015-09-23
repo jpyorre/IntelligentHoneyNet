@@ -804,7 +804,7 @@ There will be a few prompts. Enter the information requested and select yes when
 
 Some basic information:
 
-1: Intel can be found at https://yourserverip/ (attackers have to attack your honeypots first and then data will being to populate in there)
+1: Intel can be found at https://yourserverip/ (attackers have to attack your honeypots first and then data will start to populate the database)
 
 2: A kibana interface is set up at http://yourserverip/. You can make a dashboard there to show all the stuff.
 
