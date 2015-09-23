@@ -448,7 +448,7 @@ HPN=$(dirname "$0")
 DIR="$HPN/HoneyNet_Installer/"
 
 # make directories:
-mkdir -p /opt/transfer /opt/conpot /opt/cronscripts /opt/analysis /opt/sshreplays /var/dionaea/wwwroot /var/dionaea/binaries /var/dionaea/log /var/dionaea/bistreams
+mkdir -p /opt/transfer /opt/conpot /opt/cronscripts /opt/analysis /opt/malware /opt/sshreplays /var/dionaea/wwwroot /var/dionaea/binaries /var/dionaea/log /var/dionaea/bistreams
 
 # Copy analysis scripts:
 cp $HPN/client/analysis/* /opt/analysis/ && chmod 755 /opt/analysis/*
