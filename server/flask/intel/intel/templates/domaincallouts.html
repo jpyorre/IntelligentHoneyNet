@@ -1,25 +1,16 @@
 {% extends "base.html" %}
 {% block head %}
-
-<link href="/static/css/bootstrap.css" rel="stylesheet" media="screen">
-<link href="/static/css/bootstrap-responsive.min.css" rel="stylesheet">
-<script src="http://code.jquery.com/jquery-latest.js"></script>
-<script src="/static/js/bootstrap.min.js"></script>
 {% endblock %}
+
 {% block body %}
       <h3>SSH Callouts to Domains</h3>
-      <table width="100%" border=1>
-        <thead>
           <tr>
-            <td>Domain</td>
-            <td>Registrar</td>
-            <td>Creation Date</td>
-            <td>Expiration Date</td>
-            <td>Last Updated</td>
+            <td><b>Domain</b></td>
+            <td><b>Registrar</b></td>
+            <td><b>Creation Date</b></td>
+            <td><b>Expiration Date</b></td>
+            <td><b>Last Updated</b></td>
           </tr>
-        </thead>
-        <tbody>
-            <tbody>
 
           {% for items in data %}
             <tr>
@@ -28,11 +19,7 @@
               <td>{{ items.created  }}</td>
               <td>{{ items.expiration  }}</td>
               <td>{{ items.updated  }}</td>
-
+            </tr>
           {% endfor %}
-
-        
-        </tbody>
-      </table>
-    </div>
+          
 {% endblock %}

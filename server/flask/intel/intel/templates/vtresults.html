@@ -1,25 +1,15 @@
 {% extends "base.html" %}
 {% block head %}
-
-<link href="/static/css/bootstrap.min.css" rel="stylesheet" media="screen">
-<link href="/static/css/bootstrap-responsive.min.css" rel="stylesheet">
-<script src="http://code.jquery.com/jquery-latest.js"></script>
-<script src="/static/js/bootstrap.min.js"></script>
 {% endblock %}
+
 {% block body %}
 <h3>Malware from Honeypots with results on VirusTotal</h3>
-    <div class="page">
-      <table width="100%" border=1>
-        <thead>
           <tr>
-            <td>Scanned</td>
-            <td>Ratio</td>
-            <td>Malware</td>
-            <td>Link on VT</td>
+            <td><b>Scanned</b></td>
+            <td><b>Ratio</b></td>
+            <td><b>Malware</b></td>
+            <td><b>Link on VT</b></td>
           </tr>
-        </thead>
-        <tbody>
-            <tbody>
 
           {% for items in data %}
             <tr>
@@ -27,12 +17,6 @@
               <td>{{ items.scanratio  }}</td>
               <td>{{ items.variant  }}</td>
               <td><a href="{{ items.link  }}">More info</a></td>
-
           {% endfor %}
 
-        
-        </tbody>
-      </table>
-
-    </div>
 {% endblock %}
