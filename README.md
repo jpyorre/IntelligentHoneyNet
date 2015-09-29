@@ -26,33 +26,23 @@ Current Honeypots
 * Cowrie: SSH Honeypot (it's a fork of Kippo)
 * GasPot: Attackers think they're connecting to gas station sensors
 * ConPot: SCADA honeypot
-* Dionaea: Collects malware (note: Writes to a database and I haven't written anything to log it to tex
-t yet")
+* Dionaea: Collects malware (note: Writes to a database and I haven't written anything to log it to text yet")
 * Glastopf: Web honeypot (note: Writes to a database and I haven't written anything to log it to text yet")
 Upcoming
 --------------------
-Currently being worked on:
-
-* Updating logstash to properly filter conpot and dionaea
-* Creating a python script to automatically replay SSH session and gather intel from them
-* Adding more honeypots
-* The Flask page is kind of ugly. This is being worked on.
-* Check malware against malwr.com (not just virustotal)
-* The ability to download csv files of all the IP's, domains and other indicators
-
 
 Requirements:
 --------------------
-*The server should work on any version of Linux, but it's been tested on Ubuntu Server 12.04
+*The server should work on any version of Linux.
 *The client should be installed on Ubuntu Server 12.04 (Dionaea only seems to work on this version)
 Once installed, you need to add a virustotal API key to /opt/analysis/virustotal_api_key.txt and an investigate API key to /opt/analysis/investigate_api_key.txt
 
 How to run
 --------------------
-Clone this on a (preferably) ubuntu 12.04 server, then cd to the IntelligentHoneyNet directory. Run 'sudo sh honeynet_setup.sh'. Answer a question or two in the beginning and do something for about 5 minutes. When it's done, follow the brief instructions that will be displayed on your screen for details on installing the honeypot clients.
+Clone this on a (preferably) ubuntu 12.04 server (but I've found it doesn't matter for the server portion), then cd to the IntelligentHoneyNet directory. Run 'sudo sh honeynet_setup.sh'. Answer a question or two in the beginning and do something for about 5 minutes. When it's done, follow the brief instructions that will be displayed on your screen for details on installing the honeypot clients.
 
-There are a few hiccups as of 9/18/15:
-* I'm still testing that the cron jobs are running the analysis scripts correctly
+
+There are a few hiccups that I'm working on at the moment:
 * I need to write Conpot and Dionaea filters for logstash so Kibana can classify them correctly
 * I need to create a python script to get the Dionaea logs out of its sqlite db and into text
 * In the client install script that you run on honepot clients to configure them, I set it up so the public IP address (which you enter at the beginning of the process) is entered into the stunnel.conf file for secure communication of logstash -> Redis data and various log files between the honepot clients and the server. However, in testing, I've noticed that it hasn't been fixing that. I ended up adding a sed command to replace some text, but won't be testing that at the time of this writing (it'll be tested in about 10 hours). Hopefully the sed commands work. If not, here's what you need to do to fix it. 
@@ -60,3 +50,21 @@ There are a few hiccups as of 9/18/15:
 ** Replace the REPLACEME part with the IP address or domain of the server.
 ** Save and restart stunnel: sudo service stunnel4 restart
 
+--------------------
+Upcoming and in progress:
+
+* Updating logstash to properly filter conpot and dionaea
+* Display replayed SSH sessions from the ssh informational pages
+* Grab indicators from replayed SSH sessions
+* Make the web portion better:
+**Pagination
+**User logins
+**Adding basic statistics
+**Uniquing malware findings
+**Ability to sort
+**Ability to search
+**Ability to download malware associated with an event
+**Add additional information from OpenDNS Investigate and/or other sources
+* Check malware against malwr.com (not just virustotal)
+* The ability to download csv files of all the IP's, domains and other indicators
+* Switch to installation via docker and puppet for better deployment
