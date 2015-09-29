@@ -94,4 +94,4 @@ for eachline in lines[1:]:
 	except:
 		data = ''
 put_VTResults_into_mongodb()
-#remove_files()
+remove_files()
