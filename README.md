@@ -28,7 +28,6 @@ Current Honeypots
 * ConPot: SCADA honeypot
 * Dionaea: Collects malware (note: Writes to a database and I haven't written anything to log it to text yet")
 * Glastopf: Web honeypot (note: Writes to a database and I haven't written anything to log it to text yet")
-Upcoming
 
 Requirements:
 --------------------
