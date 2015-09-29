@@ -40,11 +40,6 @@ def write_vt_results(line):
 	writefile.write(line +'\n')
 	writefile.close()
 
-def write_no_vt_results(line):
-	writefile = open(no_vtresults,'a')
-	writefile.write(line +'\n')
-	writefile.close()
-
 def writeappend(filename,line):
         writefile = open(filename,'a')
         writefile.write(str(line) +'\n')
@@ -90,12 +85,13 @@ os.system('chmod 777 /opt/files/incoming/malware_from_honeypots.txt')
 # open the file like this and skip the first line because it has a newline
 lines = open(malware_from_honeypots,'r').readlines()
 for eachline in lines[1:]:
+# This makes sure to avoid erroring out on empty lines, since those get created sometimes:
+	try:
 		data = json.loads(eachline)
-		try:
-			filename,sha256,source = data['message'].split(',')
-			sha256 = sha256.strip('\n')
-			get_VT_report(sha256)
-		except:
-			writeappend('no_vt_results.txt',data)
+		filename,sha256,source = data['message'].split(',')
+                sha256 = sha256.strip('\n')
+		get_VT_report(sha256)
+	except:
+		data = ''
 put_VTResults_into_mongodb()
-remove_files()
+#remove_files()
