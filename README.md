@@ -1,12 +1,7 @@
 # The Intelligent HoneyNet
 
-*Work in progress*
-
-*Last update, 9/17/2015*
-
 * Dashboard: (http://imgur.com/Sfk9Az4)
 * Intel page: (http://imgur.com/13V78fz)
-
 
 
 Purpose
@@ -31,8 +26,9 @@ Current Honeypots
 * Cowrie: SSH Honeypot (it's a fork of Kippo)
 * GasPot: Attackers think they're connecting to gas station sensors
 * ConPot: SCADA honeypot
-* Dionaea: Collects malware
-
+* Dionaea: Collects malware (note: Writes to a database and I haven't written anything to log it to tex
+t yet")
+* Glastopf: Web honeypot (note: Writes to a database and I haven't written anything to log it to text yet")
 Upcoming
 --------------------
 Currently being worked on:
