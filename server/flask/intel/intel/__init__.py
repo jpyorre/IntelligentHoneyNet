@@ -48,7 +48,7 @@ def successfulconnections():
 	COLLECTION_NAME = 'successfulconnections'
 	collection = connection[SSH_DBS_NAME][COLLECTION_NAME]
 	FIELDS = {'time': True, 'source': True, 'user': True, 'password': True, 'asn': True, 'org': True, '_id': False }
-	callouts = collection.find(projection=FIELDS)
+	callouts = collection.find(projection=FIELDS).sort('time',-1)
 
 	connection.close()
 	return render_template('successfulconnections.html', data = callouts)
@@ -60,7 +60,7 @@ def unsuccessfulconnections():
 	COLLECTION_NAME = 'unsuccessfulconnections'
 	collection = connection[SSH_DBS_NAME][COLLECTION_NAME]
 	FIELDS = {'time': True, 'source': True, 'user': True, 'password': True, 'asn': True, 'org': True, '_id': False }
-	callouts = collection.find(projection=FIELDS)
+	callouts = collection.find(projection=FIELDS).sort('time',-1)
 
 	connection.close()
 	return render_template('unsuccessfulconnections.html', data = callouts)
@@ -72,7 +72,7 @@ def vtresults():
 	COLLECTION_NAME = 'results'
 	collection = connection[VT_DBS_NAME][COLLECTION_NAME]
 	FIELDS = {'scandate': True, 'scanratio': True, 'variant': True, 'link': True, '_id': False }
-	vtresults = collection.find(projection=FIELDS)
+	vtresults = collection.find(projection=FIELDS).sort('scandate',-1)
 	connection.close()
 	
 	return render_template('vtresults.html', data = vtresults)
@@ -95,7 +95,7 @@ def conpotconnections():
 	COLLECTION_NAME = 'successfulconnections'
 	collection = connection[CONPOT_DBS_NAME][COLLECTION_NAME]
 	FIELDS = {'time': True, 'ip': True, 'source': True, 'asn': True, 'org': True, 'created': True,'_id': False }
-	conpotconnections = collection.find(projection=FIELDS)
+	conpotconnections = collection.find(projection=FIELDS).sort('time',-1)
 
 	connection.close()
 	return render_template('conpotconnections.html', data = conpotconnections)
@@ -106,7 +106,7 @@ def gaspotconnections():
         COLLECTION_NAME = 'connections'
         collection = connection[GASPOT_DBS_NAME][COLLECTION_NAME]
         FIELDS = {'time': True, 'command': True, 'ip': True, 'asn': True, 'org': True, 'created': True,'_id': False }
-        conpotconnections = collection.find(projection=FIELDS)
+        conpotconnections = collection.find(projection=FIELDS).sort('time',-1)
 
         connection.close()
         return render_template('gaspotconnections.html', data = conpotconnections)
