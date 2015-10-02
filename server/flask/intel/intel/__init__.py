@@ -5,6 +5,7 @@ import json
 from bson import json_util
 from bson.json_util import dumps
 from flask import Blueprint
+import csv
 
 app = Flask(__name__)
 
@@ -47,11 +48,34 @@ def successfulconnections():
 	connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
 	COLLECTION_NAME = 'successfulconnections'
 	collection = connection[SSH_DBS_NAME][COLLECTION_NAME]
-	FIELDS = {'time': True, 'source': True, 'user': True, 'password': True, 'asn': True, 'org': True, '_id': False }
-	callouts = collection.find(projection=FIELDS).sort('time',-1)
+	FIELDS = {'time': True, 'source': True, 'user': True, 'password': True, 'asn': True, 'org': True, 'created': True, '_id': False }
+	successfulssh = collection.find(projection=FIELDS).sort('time',-1)
 
+	# Create CSV
+	with open ('/var/www/intel/intel/static/ssh_successful_connections.csv', 'w') as outfile:
+		csvwriter = csv.writer(outfile)
+		csvwriter = csv.writer(outfile)
+		_header = "Time of Attack|Attacker IP|Username|Password|ASN (Attacker IP)|Attacker IP Organizational Information|Attacker IP Created"
+		header = _header.split("|")
+		csvwriter.writerow(header)
+		for field in successfulssh:
+			time = field['time']
+			host = field['source']
+			username = field['user']
+			password = field['password']
+			asn = field['asn']
+			organization = field['org']
+			if field['created'] == "None":
+				created = "No Data"
+			else:
+				created = field['created']
+			_line = time+"|"+host+"|"+username+"|"+password+"|"+asn+"|"+organization+"|"+created
+			line = _line.split("|")
+			csvwriter.writerow(line)
+
+	successfulssh = collection.find(projection=FIELDS).sort('time',-1)
 	connection.close()
-	return render_template('successfulconnections.html', data = callouts)
+	return render_template('successfulconnections.html', data = successfulssh)
 
 
 @app.route("/ssh/unsuccessfulconnections")
@@ -59,11 +83,34 @@ def unsuccessfulconnections():
 	connection = MongoClient(MONGODB_HOST, MONGODB_PORT)
 	COLLECTION_NAME = 'unsuccessfulconnections'
 	collection = connection[SSH_DBS_NAME][COLLECTION_NAME]
-	FIELDS = {'time': True, 'source': True, 'user': True, 'password': True, 'asn': True, 'org': True, '_id': False }
-	callouts = collection.find(projection=FIELDS).sort('time',-1)
+	FIELDS = {'time': True, 'source': True, 'user': True, 'password': True, 'asn': True, 'org': True, 'created': True, '_id': False }
+	unsuccessfulssh = collection.find(projection=FIELDS).sort('time',-1)
 
+        # Create CSV
+        with open ('/var/www/intel/intel/static/ssh_unsuccessful_connections.csv', 'w') as outfile:
+                csvwriter = csv.writer(outfile)
+                csvwriter = csv.writer(outfile)
+                _header = "Time of Attack|Attacker IP|Username|Password|ASN (Attacker IP)|Attacker IP Organizational Information|Attacker IP Created"
+                header = _header.split("|")
+                csvwriter.writerow(header)
+                for field in unsuccessfulssh:
+                        time = field['time']
+                        host = field['source']
+                        username = field['user']
+                        password = field['password']
+                        asn = field['asn']
+                        organization = field['org']
+                        if field['created'] == "None":
+                                created = "No Data"
+                        else:
+                                created = field['created']
+                        _line = time+"|"+host+"|"+username+"|"+password+"|"+asn+"|"+organization+"|"+created
+                        line = _line.split("|")
+                        csvwriter.writerow(line)
+
+	unsuccessfulssh = collection.find(projection=FIELDS).sort('time',-1)
 	connection.close()
-	return render_template('unsuccessfulconnections.html', data = callouts)
+	return render_template('unsuccessfulconnections.html', data = unsuccessfulssh)
 
 
 @app.route("/malware/virustotal/results")
@@ -106,12 +153,38 @@ def gaspotconnections():
         COLLECTION_NAME = 'connections'
         collection = connection[GASPOT_DBS_NAME][COLLECTION_NAME]
         FIELDS = {'time': True, 'command': True, 'ip': True, 'asn': True, 'org': True, 'created': True,'_id': False }
-        conpotconnections = collection.find(projection=FIELDS).sort('time',-1)
+	gaspotconnects = collection.find(projection=FIELDS).distinct("ip")
+        gaspotconnections = collection.find(projection=FIELDS).sort('time',-1)
+	# CSV Download code:
 
-        connection.close()
-        return render_template('gaspotconnections.html', data = conpotconnections)
+	with open ('/var/www/intel/intel/static/gaspot_connections.csv', 'w') as outfile:
+		csvwriter = csv.writer(outfile)
+
+		_header = "Time of Attack|Attacker IP|Command Entered by Attacker|ASN (Attacker IP)|Attacker IP Organizational Information|Attacker IP Created"
+		header = _header.split("|")
+		csvwriter.writerow(header)
+
+		for field in gaspotconnections:
+			time = field['time']
+			host = field['ip']
+			command = field['command']
+			asn = field['asn']
+			organization = field['org']
+			if field['created'] == "None":
+				created = "No Data"
+			else:
+				created = field['created']
+	
+			_line = time+"|"+host+"|"+command+"|"+asn+"|"+organization+"|"+created
+			line = _line.split("|")
+			csvwriter.writerow(line)
+	
+	gaspotconnections = collection.find(projection=FIELDS).sort('time',-1)
+	connection.close()
+        return render_template('gaspotconnections.html', data = gaspotconnections)
+
 
 
 if __name__ == "__main__":
-	app.run()
-	#app.run(host='0.0.0.0',port=5000,debug=True)
+	#app.run()
+	app.run(host='0.0.0.0',port=5000,debug=True)
