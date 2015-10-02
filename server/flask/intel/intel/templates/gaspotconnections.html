@@ -4,6 +4,7 @@
 
 {% block body %}
       <h3>Gaspot Connections</h3>
+	<a href="/static/gaspot_connections.csv">Download CSV</a>
           <tr>
            <td><b>Time</b></td>
 	    <td><b>Command</b></td>
@@ -15,7 +16,7 @@
 
           {% for items in data %}
             <tr>
-              <td>{{ items.time  }}</td>
+	      <td>{{ items.time }} </td>
 	      <td>{{ items.command  }}</td>
               <td>{{ items.ip  }}</td>
               <td>{{ items.asn  }}</td>
