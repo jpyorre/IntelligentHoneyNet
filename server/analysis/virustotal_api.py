@@ -8,6 +8,7 @@ import urllib,urllib2
 
 malware_from_honeypots = '/opt/files/incoming/malware_from_honeypots.txt'
 vt_results = '/opt/analysis/vt_results.txt'
+unique_vt_results = '/opt/analysis/unique_vt_results.txt'
 notprocessed = '/opt/analysis/vt_notprocessed.txt'
 alreadyprocessed = '/opt/analysis/vt_alreadyprocessed.txt'
 unique_not_processed = '/opt/analysis/vt_unique_not_processed.txt'
@@ -45,8 +46,8 @@ def check_if_in_db(sha256):
 
 def put_VTResults_into_mongodb():
 	vtresults = {}
-	if os.path.isfile(vt_results):
-		for eachline in open(vt_results):
+	if os.path.isfile(unique_vt_results):
+		for eachline in open(unique_vt_results):
 			scandate,scanratio,variant,link = eachline.strip().split('|')
 			result = {'scandate':scandate,'scanratio':scanratio,'variant':variant,'link':link}
 			vtresults_db = connection.virustotal.results
@@ -87,6 +88,8 @@ def get_VT_report(sha256):
 def remove_files():
 	if os.path.isfile(vt_results):
 		os.system('rm ' + vt_results)
+	if os.path.isfile(unique_vt_results):
+		os.system('rm ' + unique_vt_results)
 	if os.path.isfile(notprocessed):
 		os.system('rm ' + notprocessed)
 	if os.path.isfile(alreadyprocessed):
@@ -105,17 +108,20 @@ def main():
 			data = json.loads(eachline)
 			filename,sha256,source = data['message'].split(',')
 			check_if_in_db(sha256)
-			writeappend(notprocessed,sha256)
+		#	writeappend(notprocessed,sha256)
 		except:
 			data = ''
+	if os.path.isfile(notprocessed):
+		os.system('sort -u ' + notprocessed + ' > ' + unique_not_processed)
 
-	os.system('sort -u ' + notprocessed + ' > ' + unique_not_processed)
-	
-	with open(unique_not_processed) as new_shaw_256:
-		for sha in new_shaw_256:
-			sha256 = sha.strip()
-			get_VT_report(sha256)
-	put_VTResults_into_mongodb()
-	remove_files()
+	if os.path.isfile(unique_not_processed):	
+		with open(unique_not_processed) as new_shaw_256:
+			for sha in new_shaw_256:
+				sha256 = sha.strip()
+				get_VT_report(sha256)
+	if os.path.isfile(vt_results):
+		os.system('sort -u ' + vt_results + ' > ' + unique_vt_results)
+		put_VTResults_into_mongodb()
 
 main()
+remove_files()
