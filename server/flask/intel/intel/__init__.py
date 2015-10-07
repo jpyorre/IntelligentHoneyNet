@@ -214,7 +214,7 @@ def conpotconnections():
                                 created = "No Data"
                         else:
                                 created = field['created']
-                        _line = ip+"|"+asn+"|"+org+"|"+created
+                        _line = time+"|"+host+"|"+asn+"|"+org+"|"+created
                         line = _line.split("|")
                         csvwriter.writerow(line)
 
