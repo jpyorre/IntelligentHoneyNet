@@ -28,7 +28,26 @@ def ip_callouts():
 	FIELDS = {'host': True, 'asn': True, 'org': True, 'created': True, '_id': False }
 	callouts = collection.find(projection=FIELDS)
 
+        # Write CSV:
+        with open ('/var/www/intel/intel/static/ssh_IP_callouts.csv', 'w') as outfile:
+                csvwriter = csv.writer(outfile)
+                _header = "IP Address called out to|ASN|Organization that owns the IP|IP Creation Date"
+                header = _header.split("|")
+                csvwriter.writerow(header)
+                for field in callouts:
+                        ip = field['host']
+                        asn = field['asn']
+                        org = field['org']
+                        if field['created'] == "None":
+                                created = "No Data"
+                        else:
+                                created = field['created']
+                        _line = ip+"|"+asn+"|"+org+"|"+created
+                        line = _line.split("|")
+                        csvwriter.writerow(line)
+
 	connection.close()
+	callouts = collection.find(projection=FIELDS)
 	return render_template('ipcallouts.html', data = callouts)
 
 @app.route("/ssh/domaincallouts")
@@ -39,7 +58,27 @@ def domain_callouts():
 	FIELDS = {'domain': True, 'registrar': True, 'created': True, 'expiration': True, 'updated': True, '_id': False }
 	callouts = collection.find(projection=FIELDS)
 
+	# Write CSV:
+	with open ('/var/www/intel/intel/static/ssh_domain_callouts.csv', 'w') as outfile:
+        	csvwriter = csv.writer(outfile)
+	        _header = "Domain called out to|Registrar for the Domain|Domain Creation Date|Domain Expiration Date|Last Update to the Domain"
+       	 	header = _header.split("|")
+        	csvwriter.writerow(header)
+        	for field in callouts:
+               		domain = field['domain']
+                	registrar = field['registrar']
+                	expiration = field['expiration']
+                	updated = field['updated']
+                	if field['created'] == "None":
+                        	created = "No Data"
+                	else:
+                        	created = field['created']
+                	_line = domain+"|"+registrar+"|"+created+"|"+expiration+"|"+updated
+                	line = _line.split("|")
+                	csvwriter.writerow(line)
+
 	connection.close()
+	callouts = collection.find(projection=FIELDS)
 	return render_template('domaincallouts.html', data = callouts)
 
 
@@ -53,7 +92,6 @@ def successfulconnections():
 
 	# Create CSV
 	with open ('/var/www/intel/intel/static/ssh_successful_connections.csv', 'w') as outfile:
-		csvwriter = csv.writer(outfile)
 		csvwriter = csv.writer(outfile)
 		_header = "Time of Attack|Attacker IP|Username|Password|ASN (Attacker IP)|Attacker IP Organizational Information|Attacker IP Created"
 		header = _header.split("|")
@@ -120,8 +158,25 @@ def vtresults():
 	collection = connection[VT_DBS_NAME][COLLECTION_NAME]
 	FIELDS = {'scandate': True, 'scanratio': True, 'variant': True, 'link': True, '_id': False }
 	vtresults = collection.find(projection=FIELDS).sort('scandate',-1)
+	#vtresults = collection.find(projection=FIELDS).distinct('variant')
+
+        # Write CSV:
+        with open ('/var/www/intel/intel/static/Virust_Total_Results.csv', 'w') as outfile:
+                csvwriter = csv.writer(outfile)
+                _header = "Scan Date|Ratio|Malware Names|Link on VirusTotal"
+                header = _header.split("|")
+                csvwriter.writerow(header)
+                for field in vtresults:
+                        date = field['scandate']
+                        ratio = field['scanratio']
+                        name = field['variant']
+                        link = field['link']
+                        _line = date+"|"+ratio+"|"+name+"|"+link
+                        line = _line.split("|")
+                        csvwriter.writerow(line)
+
 	connection.close()
-	
+	vtresults = collection.find(projection=FIELDS).sort('scandate',-1)
 	return render_template('vtresults.html', data = vtresults)
 
 
@@ -144,7 +199,27 @@ def conpotconnections():
 	FIELDS = {'time': True, 'ip': True, 'source': True, 'asn': True, 'org': True, 'created': True,'_id': False }
 	conpotconnections = collection.find(projection=FIELDS).sort('time',-1)
 
+        # Write CSV:
+        with open ('/var/www/intel/intel/static/ConPot_Connections.csv', 'w') as outfile:
+                csvwriter = csv.writer(outfile)
+                _header = "Time|Host|ASN|Organization|Created"
+                header = _header.split("|")
+                csvwriter.writerow(header)
+                for field in conpotconnections:
+                        time = field['time']
+                        host = field['ip']
+                        asn = field['asn']
+			org = field['org']
+                        if field['created'] == "None":
+                                created = "No Data"
+                        else:
+                                created = field['created']
+                        _line = ip+"|"+asn+"|"+org+"|"+created
+                        line = _line.split("|")
+                        csvwriter.writerow(line)
+
 	connection.close()
+	conpotconnections = collection.find(projection=FIELDS).sort('time',-1)
 	return render_template('conpotconnections.html', data = conpotconnections)
 
 @app.route("/gaspot/connections")
