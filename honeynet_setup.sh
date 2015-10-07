@@ -387,9 +387,14 @@ cat > /opt/cronscripts/malwareanalyzer.sh<<EOF
 python /opt/analysis/virustotal_api.py
 EOF
 
-cat > /opt/cronscripts/cowrie_log_analysis.sh<<EOF
+cat > /opt/cronscripts/cowrie_log_reader.sh<<EOF
 #!/bin/sh
-python /opt/analysis/cowrie_log_analysis.py
+python /opt/analysis/cowrie_log_reader.py
+EOF
+
+cat > /opt/cronscripts/cowrie_json_reader.sh<<EOF
+#!/bin/sh
+python /opt/analysis/cowrie_json_reader.py
 EOF
 
 cat > /opt/cronscripts/gaspot_log_analysis.sh<<EOF
@@ -399,12 +404,14 @@ EOF
 
 chmod 755 /opt/cronscripts/conpotanalyzer.sh
 chmod 755 /opt/cronscripts/malwareanalyzer.sh
-chmod 755 /opt/cronscripts/cowrie_log_analysis.sh
+chmod 755 /opt/cronscripts/cowrie_log_reader.sh
+chmod 755 /opt/cronscripts/cowrie_json_reader.sh
 chmod 755 /opt/cronscripts/gaspot_log_analysis.sh
 
 (crontab -u root -l; echo "*/4 * * * * /opt/cronscripts/conpotanalyzer.sh" ) | crontab -u root -
 (crontab -u root -l; echo "*/11 * * * * /opt/cronscripts/malwareanalyzer.sh" ) | crontab -u root -
-(crontab -u root -l; echo "*/8 * * * * /opt/cronscripts/cowrie_log_analysis.sh" ) | crontab -u root -
+(crontab -u root -l; echo "*/8 * * * * /opt/cronscripts/cowrie_log_reader.sh" ) | crontab -u root -
+(crontab -u root -l; echo "*/6 * * * * /opt/cronscripts/cowrie_json_reader.sh" ) | crontab -u root -
 (crontab -u root -l; echo "*/14 * * * * /opt/cronscripts/gaspot_log_analysis.sh" ) | crontab -u root -
 
 ####### END CRON CONFIG #######
@@ -435,7 +442,7 @@ read SERVER
 
 add-apt-repository -y ppa:honeynet/nightly
 apt-get update
-apt-get -y install python-dev openssl python-openssl python-pyasn1 python-twisted git python-pip authbind python-software-properties patch libglib2.0-dev libssl-dev libcurl4-openssl-dev libreadline-dev libsqlite3-dev libtool automake autoconf build-essential subversion git-core flex bison pkg-config libgc-dev libgc1c2 sqlite3 python-geoip sqlite libnl-3-dev libnl-genl-3-dev libnl-nf-3-dev libnl-route-3-dev supervisor stunnel4 openjdk-7-jdk curl authbind python-dev openssl git libsmi2ldbl libsmi2-common python-dev libxml2-dev python-lxml libxslt-dev libmysqlclient-dev dionaea ntp
+apt-get -y install python-dev openssl python-openssl python-pyasn1 python-twisted git python-pip authbind python-software-properties patch libglib2.0-dev libssl-dev libcurl4-openssl-dev libreadline-dev libsqlite3-dev libtool automake autoconf build-essential subversion git-core flex bison pkg-config libgc-dev libgc1c2 sqlite3 python-geoip sqlite libnl-3-dev libnl-genl-3-dev libnl-nf-3-dev libnl-route-3-dev supervisor stunnel4 openjdk-7-jdk curl authbind python-dev openssl git libsmi2ldbl libsmi2-common python-dev libxml2-dev python-lxml libxslt-dev libmysqlclient-dev dionaea ntp php5 php5-dev
 
 # Update the date (seems to have been a problem during my testing - my vm's were not udpating their date and time)
 echo "This might hang for about 5 seconds:"
@@ -741,6 +748,133 @@ stopsignal=QUIT
 EOF
 
 ####### END DIONAEA Honeypot #######
+
+
+####### GLASTOPF Honeypot #######
+# This installation inspired by and partially borrowed from MHN
+# PHP sandbox
+cd /usr/local/src/
+git clone git://github.com/glastopf/BFR.git
+cd BFR
+phpize
+./configure --enable-bfr
+make && make install
+
+# Updated php.ini to add bfr.so
+BFR_BUILD_OUTPUT=`find /usr/lib/php5/ -type f -name "bfr.so" | awk -F"/" '{print $5}'`
+echo "zend_extension = /usr/lib/php5/$BFR_BUILD_OUTPUT/bfr.so" >> /etc/php5/apache2/php.ini
+
+# Stop apache2 and disable it from start up
+service apache2 stop
+update-rc.d -f  apache2 remove
+
+# Upgrade python-greenlet
+pip install --upgrade greenlet
+
+# Install glastopf
+pip install glastopf
+mkdir -p /opt/glastopf
+cd /opt/glastopf/
+
+cat > /opt/glastopf/glastopf.cfg <<EOF
+[webserver]
+host = 0.0.0.0
+port = 80
+uid = nobody
+gid = nogroup
+proxy_enabled = False
+
+#Generic logging for general monitoring
+[logging]
+consolelog_enabled = False
+filelog_enabled = True
+logfile = log/glastopf.log
+
+[dork-db]
+enabled = True
+pattern = rfi
+#Extracts dorks from a online dorks service operated by The Honeynet Project
+mnem_service = True
+
+[hpfeed]
+enabled = True
+host = $HPF_HOST
+port = $HPF_PORT
+secret = $HPF_SECRET
+# channels comma separated
+chan_events = glastopf.events
+chan_files = glastopf.files
+ident = $HPF_IDENT
+
+[main-database]
+#If disabled a sqlite database will be created (db/glastopf.db)
+#to be used as dork storage.
+enabled = True
+#mongodb or sqlalchemy connection string, ex:
+#mongodb://localhost:27017/glastopf
+#mongodb://james:bond@localhost:27017/glastopf
+#mysql://james:bond@somehost.com/glastopf
+connection_string = sqlite:///db/glastopf.db
+
+[surfcertids]
+enabled = False
+host = localhost
+port = 5432
+user =
+password =
+database = idsserver
+
+[syslog]
+enabled = False
+socket = /dev/log
+
+[mail]
+enabled = False
+# an email notification will be sent only if a specified matched pattern is identified.
+# Use the wildcard char *, to be notified every time
+patterns = rfi,lfi
+user =
+pwd =
+mail_from =
+mail_to =
+smtp_host = smtp.gmail.com
+smtp_port = 587
+
+[taxii]
+enabled = False
+host = taxiitest.mitre.org
+port = 80
+inbox_path = /services/inbox/default/
+use_https = False
+use_auth_basic = False
+auth_basic_username = your_username
+auth_basic_password = your_password
+use_auth_certificate = False
+auth_certificate_keyfile = full_path_to_keyfile
+auth_certificate_certfile = full_path_to_certfile
+include_contact_info = False
+contact_name = ...
+contact_email = ...
+
+[misc]
+# set webserver banner
+banner = Apache/2.0.48
+EOF
+
+# Set up supervisor
+cat > /etc/supervisor/conf.d/glastopf.conf <<EOF
+[program:glastopf]
+command=/usr/bin/python /usr/local/bin/glastopf-runner
+directory=/opt/glastopf
+stdout_logfile=/var/log/glastopf.out
+stderr_logfile=/var/log/glastopf.err
+autostart=true
+autorestart=true
+redirect_stderr=true
+stopsignal=QUIT
+EOF
+
+####### END GLASTOPF Honeypot #######
 
 ####### CRON CONFIG (for client analysis scripts) #######
 cat > /opt/cronscripts/getmalwareinfo.sh<<EOF
