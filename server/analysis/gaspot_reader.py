@@ -109,20 +109,22 @@ def process_file():
 		data = json.loads(line)
 		message = data['message']
 		if 'Command' in message:
-			_time = message.split(' - ')[0]
-			time = _time.split('{\"message\":\"')
-			time = str(time).replace('[u\'\', u\'','').replace('\']','').replace('[u\'','')
-			_command = message.split(' - ')[1]
-			command = _command.split(':')[0]
-			_ip = message.split(': ')[1]
-			ip = _ip.split('\"')[0]
+			try:
+				_time = message.split(' - ')[0]
+				time = _time.split('{\"message\":\"')
+				time = str(time).replace('[u\'\', u\'','').replace('\']','').replace('[u\'','')
+				_command = message.split(' - ')[1]
+				command = _command.split(':')[0]
+				_ip = message.split(': ')[1]
+				ip = _ip.split('\"')[0]
 		
-			line = str(time) + '|' + str(command) + '|' +  str(ip)
-
+				line = str(time) + '|' + str(command) + '|' +  str(ip)
+			except:
+				line = ''
 
 			write_append(ipaddresses, line + '\n')
-		if os.path.isfile(ipaddresses):	
-			os.system('sort -u ' + ipaddresses + ' > ' + unique_ipaddresses)
+	if os.path.isfile(ipaddresses):	
+		os.system('sort -u ' + ipaddresses + ' > ' + unique_ipaddresses)
 
 	for line in open(unique_ipaddresses,'r'):
 		try:
