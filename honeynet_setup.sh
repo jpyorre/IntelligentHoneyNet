@@ -639,7 +639,7 @@ useradd cowrie -U
 cd /opt && git clone https://github.com/micheloosterhof/cowrie.git
 
 # Configure Cowrie
-cd /opt/cowrie && mv cowrie.cfg.dist cowrie.cfg && sed -i 's/hostname = svr03/hostname = payroll/g' cfgowrie.cfg && sed -i 's/ssh_version_string = SSH-2.0-OpenSSH_5.1p1 Debian-5/ssh_version_string = OpenSSH_5.9p1 Debian-5ubuntu1.4, OpenSSL 1.0.1 14 Mar 2012/g' cowrie.cfg
+cd /opt/cowrie && mv cowrie.cfg.dist cowrie.cfg && sed -i 's/hostname = svr03/hostname = payroll/g' cowrie.cfg && sed -i 's/ssh_version_string = SSH-2.0-OpenSSH_5.1p1 Debian-5/ssh_version_string = OpenSSH_5.9p1 Debian-5ubuntu1.4, OpenSSL 1.0.1 14 Mar 2012/g' cowrie.cfg
 
 touch /opt/cowrie/log/cowrie.json
 touch /opt/malware_from_honeypots.txt && chmod 777 /opt/malware_from_honeypots.txt
