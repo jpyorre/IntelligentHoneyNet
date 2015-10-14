@@ -99,8 +99,9 @@ def process_file():
     log_store= collections.defaultdict(list)
     
     for line  in open(temp_log, 'r'):
-        data = json.loads(line)
+        #data = json.loads(line)
         try:
+	    data = json.loads(line)
             ssh_id = data['session']
             log_counter[ssh_id]+=1
             log_store[ssh_id].append(data)
